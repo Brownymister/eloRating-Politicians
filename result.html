@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons" rel="stylesheet" type="text/css">
+    <link href="https://cdn.jsdelivr.net/npm/quasar@2.0.3/dist/quasar.prod.css" rel="stylesheet" type="text/css">
+
+    <!--
+        Fonts
+    -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&family=Reggae+One&family=Roboto+Mono:ital,wght@1,100&display=swap" rel="stylesheet">
+    <title>ELO</title>
+</head>
+
+<body>
+    <div id="q-app">
+        <q-toolbar class="bg-primary text-white rounded-borders">
+            <div>
+
+            </div>
+            <q-toolbar-title>EL0</q-toolbar-title>
+            <q-space></q-space>
+            <q-chip clickable @click="profile">
+                <q-avatar>
+                </q-avatar>
+                <q-tooltip></q-tooltip>
+            </q-chip>
+        </q-toolbar>
+
+        <div class="row" sytle="margin:2%">
+            <q-card class="my-card">
+                <q-img style="width: 200px" v-bind:src="RaImg"></q-img>
+                <q-card-section class="q-pt-none">
+                    {{scoreRa}}
+                </q-card-section>
+            </q-card>
+
+            <q-card class="my-card">
+                <q-img style="width: 200px" v-bind:src="RbImg"></q-img>
+                <q-card-section class="q-pt-none">
+                    {{scoreRb}}
+                </q-card-section>
+            </q-card>
+        </div>
+
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quasar@2.0.3/dist/quasar.umd.prod.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quasar@2.0.3/dist/lang/de.umd.prod.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js "></script>
+
+    <script>
+        const GET = (url) => axios.get("/graphql" + url);
+        const POST = (cmd, data) => axios.post("/graphql" + cmd, data);
+
+        /* import level1 from './level1.vue' */
+        const app = Vue.createApp({
+            data() {
+                return {
+                    RaImg: "",
+                    RbImg: "",
+                    scoreRa: "",
+                    scoreRb: "",
+                }
+            },
+            async created() {
+                img = await axios.get('/getImg');
+                this.RaImg = img.data.Img.Ra;
+                this.RbImg = img.data.Img.Rb;
+                this.getScore();
+            },
+            methods: {
+                async getScore() {
+                    var score = await axios.get('/getELO');
+                    this.scoreRa = Math.round(score.data.elo.Ra);
+                    this.scoreRb = Math.round(score.data.elo.Rb);
+                },
+            },
+        });
+        app.use(Quasar);
+        Quasar.lang.set(Quasar.lang.de);
+        const vm = app.mount('#q-app')
+    </script>
+
+</body>
+
+</html>
