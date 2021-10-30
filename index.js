@@ -2,8 +2,8 @@ const express = require('express');
 const app = express();
 var Ra = 1000;
 var Rb = 1000;
-
-app.listen(4000);
+var port = process.env.PORT || 4000;
+app.listen(port);
 
 app.get('/', function(req, res) {
     res.sendFile(__dirname + '/index.html');
