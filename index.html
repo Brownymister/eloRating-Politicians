@@ -66,20 +66,12 @@
             },
             async created() {
                 img = await axios.get('/getImg');
-                this.RaImg = img.data.Img.Ra;
-                this.RbImg = img.data.Img.Rb;
-                this.getScore();
+                this.RaImg = img.data[0].url;
+                this.RbImg = img.data[1].url;
             },
             methods: {
-                async getScore() {
-                    var score = await axios.get('/getELO');
-                    this.scoreRa = Math.round(score.data.elo.Ra);
-                    this.scoreRb = Math.round(score.data.elo.Rb);
-                },
                 async vote(iR) {
                     var vote = await axios.get('/' + iR);
-                    this.scoreRa = Math.round(vote.data.elo.Ra);
-                    this.scoreRb = Math.round(vote.data.elo.Rb);
                     window.location = '/result'
                 },
             },

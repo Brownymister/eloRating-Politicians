@@ -19,7 +19,10 @@
             <div>
 
             </div>
-            <q-toolbar-title>EL0</q-toolbar-title>
+            <q-btn flat icon="arrow_back" @click="backToMenu">
+                <q-tooltip>zurück</q-tooltip>
+            </q-btn>
+            <q-toolbar-title>EL0 results</q-toolbar-title>
             <q-space></q-space>
             <q-chip clickable @click="profile">
                 <q-avatar>
@@ -42,6 +45,20 @@
                     {{scoreRb}}
                 </q-card-section>
             </q-card>
+
+            <q-card class="my-card">
+                <q-img style="width: 200px" v-bind:src="RcImg"></q-img>
+                <q-card-section class="q-pt-none">
+                    {{scoreRc}}
+                </q-card-section>
+            </q-card>
+
+            <q-card class="my-card">
+                <q-img style="width: 200px" v-bind:src="RdImg"></q-img>
+                <q-card-section class="q-pt-none">
+                    {{scoreRd}}
+                </q-card-section>
+            </q-card>
         </div>
 
     </div>
@@ -60,22 +77,32 @@
                 return {
                     RaImg: "",
                     RbImg: "",
+                    RcImg: "",
+                    RdImg: "",
                     scoreRa: "",
                     scoreRb: "",
+                    scoreRc: "",
+                    scoreRd: "",
                 }
             },
             async created() {
-                img = await axios.get('/getImg');
-                this.RaImg = img.data.Img.Ra;
-                this.RbImg = img.data.Img.Rb;
                 this.getScore();
             },
             methods: {
                 async getScore() {
-                    var score = await axios.get('/getELO');
-                    this.scoreRa = Math.round(score.data.elo.Ra);
-                    this.scoreRb = Math.round(score.data.elo.Rb);
+                    var score = await axios.get('/getAllImg');
+                    this.scoreRa = Math.round(score.data[0].score);
+                    this.RaImg = score.data[0].url;
+                    this.scoreRb = Math.round(score.data[1].score);
+                    this.RbImg = score.data[1].url;
+                    this.scoreRc = Math.round(score.data[2].score);
+                    this.RcImg = score.data[2].url;
+                    this.scoreRd = Math.round(score.data[3].score);
+                    this.RdImg = score.data[3].url;
                 },
+                backToMenu() {
+                    window.location = "/";
+                }
             },
         });
         app.use(Quasar);
