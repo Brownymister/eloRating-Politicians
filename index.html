@@ -27,19 +27,23 @@
                 <q-tooltip></q-tooltip>
             </q-chip>
         </q-toolbar>
-
-        <div class="row" sytle="margin:2%">
-            <q-card class="my-card">
+        <div style="text-align:center;">
+            <h2>Wähle den besseren Politiker</h2>
+        </div>
+        <div class="row fixed-center">
+            <q-card class="my-card" sytle="margin:2%">
                 <q-img style="width: 200px" @click="vote('Ra')" v-bind:src="RaImg"></q-img>
 
                 <q-card-section class="q-pt-none">
+                    {{RaName}}</br> {{RaPartei}}
                 </q-card-section>
             </q-card>
 
-            <q-card class="my-card">
+            <q-card class="my-card" sytle="margin:2%">
                 <q-img style="width: 200px" @click="vote('Rb')" v-bind:src="RbImg"></q-img>
 
                 <q-card-section class="q-pt-none">
+                    {{RbName}}</br> {{RbPartei}}
                 </q-card-section>
             </q-card>
         </div>
@@ -62,17 +66,35 @@
                     RbImg: "",
                     scoreRa: "",
                     scoreRb: "",
+                    RaName: "",
+                    RbName: "",
+                    RaPartei: "",
+                    RbPartei: "",
+                    votetimes: 30,
                 }
             },
             async created() {
-                img = await axios.get('/getImg');
-                this.RaImg = img.data[0].url;
-                this.RbImg = img.data[1].url;
+                this.start();
             },
             methods: {
-                async vote(iR) {
-                    var vote = await axios.get('/' + iR);
-                    window.location = '/result'
+                async start() {
+                    img = await axios.get('/getImg');
+                    this.RaImg = img.data[0].url;
+                    this.RbImg = img.data[1].url;
+                    this.RaName = img.data[0].name;
+                    this.RbName = img.data[1].name;
+                    this.RaPartei = img.data[0].partei;
+                    this.RbPartei = img.data[1].partei;
+                },
+                vote(iR) {
+                    var vote = axios.get('/' + iR);
+                    this.votetimes--;
+                    if (this.votetimes == 0) {
+                        window.location = '/result';
+                    } else {
+                        this.start();
+                        return;
+                    }
                 },
             },
         });

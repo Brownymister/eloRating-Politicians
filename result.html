@@ -24,41 +24,10 @@
             </q-btn>
             <q-toolbar-title>EL0 results</q-toolbar-title>
             <q-space></q-space>
-            <q-chip clickable @click="profile">
-                <q-avatar>
-                </q-avatar>
-                <q-tooltip></q-tooltip>
-            </q-chip>
         </q-toolbar>
 
-        <div class="row" sytle="margin:2%">
-            <q-card class="my-card">
-                <q-img style="width: 200px" v-bind:src="RaImg"></q-img>
-                <q-card-section class="q-pt-none">
-                    {{scoreRa}}
-                </q-card-section>
-            </q-card>
+        <div class="row" id="main" sytle="margin:2%">
 
-            <q-card class="my-card">
-                <q-img style="width: 200px" v-bind:src="RbImg"></q-img>
-                <q-card-section class="q-pt-none">
-                    {{scoreRb}}
-                </q-card-section>
-            </q-card>
-
-            <q-card class="my-card">
-                <q-img style="width: 200px" v-bind:src="RcImg"></q-img>
-                <q-card-section class="q-pt-none">
-                    {{scoreRc}}
-                </q-card-section>
-            </q-card>
-
-            <q-card class="my-card">
-                <q-img style="width: 200px" v-bind:src="RdImg"></q-img>
-                <q-card-section class="q-pt-none">
-                    {{scoreRd}}
-                </q-card-section>
-            </q-card>
         </div>
 
     </div>
@@ -86,12 +55,14 @@
                 }
             },
             async created() {
-                this.getScore();
+                this.$nextTick(function() {
+                    this.getScore();
+                });
             },
             methods: {
                 async getScore() {
                     var score = await axios.get('/getAllImg');
-                    this.scoreRa = Math.round(score.data[0].score);
+                    /*                   this.scoreRa = Math.round(score.data[0].score);
                     this.RaImg = score.data[0].url;
                     this.scoreRb = Math.round(score.data[1].score);
                     this.RbImg = score.data[1].url;
@@ -99,6 +70,34 @@
                     this.RcImg = score.data[2].url;
                     this.scoreRd = Math.round(score.data[3].score);
                     this.RdImg = score.data[3].url;
+
+                                <q-card class="my-card">
+                <q-img style="width: 200px" v-bind:src="RaImg"></q-img>
+                <q-card-section class="q-pt-none">
+                    {{scoreRa}}
+                </q-card-section>
+            </q-card>
+ */
+                    score.data.forEach(element => {
+                        var score = Math.round(element.score);
+                        var card = document.createElement(`q-card`);
+                        card.setAttribute('class', 'my-card');
+                        card.setAttribute('margin', '2%')
+                        var img = document.createElement('img');
+                        img.setAttribute('src', `${element.url}`);
+                        img.setAttribute('width', '200px');
+                        card.appendChild(img)
+                        var section = document.createElement('q-card-section')
+                        section.setAttribute('class', 'q-pt-none');
+                        section.appendChild(document.createElement("br"));
+                        section.appendChild(document.createTextNode(`${element.name} `));
+                        section.appendChild(document.createElement("br"));
+                        section.appendChild(document.createTextNode(`${score} `));
+                        section.appendChild(document.createElement("br"));
+                        section.appendChild(document.createTextNode(`${element.partei} `));
+                        card.appendChild(section);
+                        document.getElementById('main').appendChild(card);
+                    });
                 },
                 backToMenu() {
                     window.location = "/";
